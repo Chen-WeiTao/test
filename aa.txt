@@ -1,0 +1,95 @@
+select * from table1 t1 left outer join table2 t2 on t1.id = t2.id
+
+select u.*,r.id as rid,r.role_name,r.role_desc from role r
+left outer join user_role ur on r.id = ur.rid
+left outer join user u on u.id = ur.uid
+
+1、overload（重载） 与 overwrite（重写）
+    重载：表示一个类中 可以有多个名称相同的方法，但彼此的参数不同（参数个数或参数类型），与方法的作用域和返回类型无关；
+    重写：表示子类中的方法可以与父类的某个方法的 名称和参数完全相同；当通过子类创建的对象调用这个方法时，将调用 子类中的定义方法，相当于将父类的此方法覆盖，这也是多态的一种表现；
+2、throw 与 throws
+    throw：手动抛出异常，一般出现在函数体中；
+    throws：声明方法可能抛出的异常，一般出现在 方法头部；
+3、final 、finally 与 finalize
+    final：用于声明属性，方法和类，表示属性不可变，方法不可重写，类不可继承；
+    finally：它是异常处理语句结构的一部分，表示总是会执行；
+    finalize：它是 Object 类的 一个方法，在 垃圾收集器 执行 的时候会调用被回收对象的 此方法，可以重写 此方法 提供垃圾收集时代的其他资源回收，例如关闭文件等。jvm 不保证此方法总被调用；
+4、Collection 与 Collections
+     Collection：它是接口， 集合类的上级接口，继承与他有关的接口主要有List和Set；
+    Collections：它 是针对集合类的一个帮助类，他提供一系列静态方法实现对各种集合的搜索、排序、线程安全等操作；如 Collections.sort（xxx）；
+5、ArrayList 与 LinkedList、Vector
+        ArrayList：对数组进行封装，实现长度可变的数组，和数组采用相同的存储方式，在内存中分配连续的空间。优点在于遍历元素和随机访问元素效率高；多线程不安全；
+        LinkedList：采用双向链表的存储方式，优点在于插入和删除元素效率高；多线程不安全；
+        Vector：类似于 ArrayList；但其使用了 synchronized 方法（多线程安全），使得性能上比 ArrayList 差；同时，在数组扩容时， ArrayList 是增加原来的 0.5倍，变成 1.5倍长度，而Vector 是增加 1倍，变成 2倍长度。
+        jdk7：创建 ArrayList 对象时，默认长度为 10，类似饿汉模式
+        jdk8：创建 ArrayList 对象时，默认长度为 0，在你第一次插入数据时，创建一个 长度为10 的数组，类似懒汉模式
+6、String 、StringBuffer、StringBuilder
+        在这方面运行速度快慢为：StringBuilder > StringBuffer > String，原因如下：
+            String为字符串常量，而StringBuilder和StringBuffer均为字符串变量，即String对象一旦创建之后该对象是不可更改的，但后两者的对象是变量，是可以更改的。Java中对String对象进行的操作实际上是一个不断创建新的对象并且将旧的对象回收的一个过程，所以执行速度很慢。而StringBuilder和StringBuffer的对象是变量，对变量进行操作就是直接对该对象进行更改，而不进行创建和回收的操作，所以速度要比String快很多。
+        在线程安全上，StringBuilder是线程不安全的，而StringBuffer是线程安全的。StringBuffer中很多方法可以带有synchronized关键字，所以可以保证线程是安全的。
+        即：String：适用于少量的字符串操作的情况
+        	StringBuilder：适用于单线程下在字符缓冲区进行大量操作的情况
+        	StringBuffer：适用多线程下在字符缓冲区进行大量操作的情况
+7、HashMap、LinkedHashMap、Hashtable、ConcurrentHashMap
+        HashMap是基于哈希表的Map接口的非同步实现（多线程不安全）， 允许使用null值和null键(HashMap最多只允许一条记录的键为null，允许多条记录的值为null)；
+        Hashtable也是一个散列表，它存储的内容是键值对。基于Dictionary类 存储数据: 首先判断value是否为空，为空则抛出异常；计算key的hash值，并根据hash值获得key在table数组中的位置index，如果table[index]元素不为空，则进行迭代，如果遇到相同的key，则直接替换，并返回旧value；否则，我们可以将其插入到table[index]位置。 key和value都不允许为null，Hashtable遇到null，直接返回NullPointerException。 线程安全,几乎所有的public的方法都是synchronized的，较HashMap速度慢。
+        ConcurrentHashMap是弱一致性，也就是说遍历过程中其他线程可能对链表结构做了调整，因此get和containsKey返回的可能是过时的数据 ConcurrentHashMap是基于分段锁设计来实现线程安全性，只有在同一个分段内才存在竞态关系，不同的分段锁之间没有锁竞争。
+        LinkedHashMap是HashMap的一个子类，它保留插入顺序，帮助我们实现了有序的HashMap。 其维护一个双向链表，并不是说其除了维护存入的数据，另外维护了一个双向链表对象，而是说其根据重写HashMap的实体类Entry，来实现能够将HashMap的数据组成一个双向列表，其存储的结构还是数组+链表的形式。
+        TreeMap 是一个有序的key-value集合，它是通过红黑树实现的。 该映射根据其键的自然顺序(字母排序)进行排序，或者根据创建映射时提供的 Comparator 进行排序，具体取决于使用的构造方法。 TreeMap是非线程安全的。
+        jdk7：创建 HashMap对象时，默认长度为 16，类似饿汉模式（内部数据结构是 数组加链表）；新加元素时 元素往头部添加
+        jdk8：创建 HashMap对象时，默认长度为 0，在你第一次插入数据时，创建一个 长度为16 的数组，类似懒汉模式（内部数据结构是 数组加链表再加红黑树）；新加元素时 元素往树尾部添加
+8、http 、 https
+        HTTP协议传输的数据都是未加密的，也就是明文的，因此使用HTTP协议传输隐私信息非常不安全，为了保证这些隐私数据能加密传输，于是网景公司设计了SSL（Secure Sockets Layer）协议用于对HTTP协议传输的数据进行加密，从而就诞生了HTTPS。简单来说，HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，要比http协议安全。
+        HTTPS和HTTP的区别主要如下：
+        1、https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
+        2、http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
+        3、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
+        4、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
+9、json、gson
+        JSON是一种与开发语言无关的,轻量级的数据格式,全称是JavaScript Object Notation,现在几乎每种语言都有处理JSON的API。
+        Gson是Google提供的用来在Java对象和JSON数据之间进行映射的Java类库,可以将一个JSON字符串转成一个Java对象,或者反过来 。
+10、sleep（）/wait（）
+        sleep就是正在执行的线程主动让出cpu，cpu去执行其他线程，在sleep指定的时间过后，cpu才会回到这个线程上继续往下执行 。如果当前线程进入了同步锁，sleep方法并不会释放锁，即使当前线程使用sleep方法让出了cpu，但其他被同步锁挡住了的线程也无法得到执行。
+        wait是指在一个已经进入了同步锁的线程内，让自己暂时让出同步锁，以便其他正在等待此锁的线程可以得到同步锁并运行。只有其他线程调用了notify方法，调用wait方法的线程就会解除wait状态和程序可以再次得到锁后继续向下运行。 
+【注意】notify并不释放锁，只是告诉调用过wait方法的线程可以去参与获得锁的竞争了，但不是马上得到锁，因为锁还在别人手里，别人还没释放。如果notify方法后面的代码还有很多，需要这些代码执行完后才会释放锁 。
+【总结】notify是告诉wait()的线程什么时候可以去继续去申请锁了。
+    举例：这两个方法来自不同的类分别是，sleep来自Thread类，和wait来自Object类。sleep是Thread的静态类方法，谁调用的谁去睡觉，即使在a线程里调用了b的sleep方法，实际上还是a去睡觉，要让b线程睡觉要在b的代码中调用sleep。
+        最主要是sleep方法没有释放锁，而wait方法释放了锁，使得其他线程可以使用同步控制块或者方法。
+11、== / equals（）
+        java中的数据类型分为两种:
+        一 、基本数据类型:
+         byte、short、int、long、float、double、char、boolean
+          比较它们需要用  ==  ，比较的是它们的值是否相等
+           二、引用数据类型：
+           也就是对基本数据类型的封装，用 == 比较的是它们的内存地址（其实还是比较的基本数据类型，它们的内存地址不就是int吗）。当new的时候，会给它一个新的内存地址，所以再通过==比较，就会返回false;在Object类中的equals方法其实比较的也是内存地址，用==和equals方法比较结果是一样的，但在一些类中把equals方法重写了，如String、Integer等类中，而不是单纯的比较内存地址了，而是比较内容或者值是否相等。
+            这个equals方法不是固定的，有需要的时候，我们根据情况自己重写。
+12、cookie / session
+        cookie数据存放在客户的浏览器上，session数据放在服务器上。
+        cookie不是很安全，别人可以分析存放在本地的COOKIE并进行COOKIE欺骗
+       考虑到安全应当使用session。
+        session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能
+       考虑到减轻服务器性能方面，应当使用COOKIE。
+        单个cookie保存的数据不能超过4K，很多浏览器都限制一个站点最多保存20个cookie。
+    所以个人建议：
+           将登陆信息等重要信息存放为SESSION
+           其他信息如果需要保留，可以放在COOKIE中
+13、DOM / SAX 解析
+        SAX解析方式：逐行扫描文档，一遍扫描一遍解析。相比于DOM，SAX可以在解析文档的任意时刻停止解析解析，是一种速度更快，更高效的方法。 优点：解析可以立即开始，速度快，没有内存压力 缺点：不能对结点做修改 ；适用于读取 XML文件。
+        DOM解析方式：DOM解析器在解析XML文档时，会把文档中的所有元素，按照其出现的层次关系，解析成一个个Node对象（节点） 优点：把XML文件在内存中构建属性结构，可以遍历和修改节点。 缺点：如果文件比较大，内存有压力，解析的时间会比较长。适用于修改 XML文件
+14、stack / queue
+        栈与队列的相同点： 
+            1.都是线性结构。 
+            2.插入操作都是限定在表尾进行。
+            3.都可以通过顺序结构和链式结构实现。
+            4.插入与删除的时间复杂度都是O（1），在空间复杂度上两者也一样。
+            5.多链栈和多链队列的管理模式可以相同。 
+        栈与队列的不同点： 
+            1.删除数据元素的位置不同，栈的删除操作在表尾进行，队列的删除操作在表头进行。 
+            2.应用场景不同；常见栈的应用场景包括括号问题的求解，表达式的转换和求值，函数调用和递归实现，深度优先搜索遍历等；常见的队列的应用场景包括计算机系统中各种资源的管理，消息缓冲器的管理和广度优先搜索遍历等。 
+            3.顺序栈能够实现多栈空间共享，而顺序队列不能。
+15、集合类
+       ![在这里插入图片描述](https://img-blog.csdn.net/20180922213024919?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM3ODkxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+        Collection是一个接口，它主要的两个分支是：List 和 Set。
+        List和Set都是接口，它们继承于Collection。List是有序的队列，List中可以有重复的元素；而Set是数学概念中的集合，Set中没有重复元素！
+        List和Set都有它们各自的实现类。
+         为了方便，我们抽象出了AbstractCollection抽象类，它实现了Collection中的绝大部分函数；这样，在Collection的实现类中，我们就可以通过继承AbstractCollection省去重复编码。AbstractList和AbstractSet都继承于AbstractCollection，具体的List实现类继承于AbstractList，而Set的实现类则继承于AbstractSet。
